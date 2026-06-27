@@ -1,11 +1,9 @@
 
-#include <iostream>
-
+#include <fmt/core.h>
 
 int main(int argc, char *argv[]) {
 
-    std::cout << "Hello, world.\n";
-
+    fmt::print("Hello, {}!\n", "ChatGPT");
 
     return 0;
 }

@@ -1,0 +1,281 @@
+# 先关闭所有检查，再显式开启需要的检查集合。
+# 这样可以避免 clang-tidy 版本升级后突然引入大量新规则。
+Checks: >
+  -*,
+
+  # Clang 静态分析器：空指针、资源泄漏、路径敏感 bug 等。
+  clang-analyzer-*,
+
+  # 容易出错的 C++ 写法。
+  bugprone-*,
+
+  # 性能相关检查，例如不必要拷贝、不必要值传递。
+  performance-*,
+
+  # 现代 C++ 建议，例如 use nullptr、using、range-for 等。
+  modernize-*,
+
+  # 可读性检查，例如命名规范、函数过大等。
+  readability-*,
+
+  # 杂项检查。
+  misc-*,
+
+  # C++ Core Guidelines 相关检查。
+  cppcoreguidelines-*,
+
+  # 不强制使用尾置返回类型。
+  # 否则会建议 int foo() 改成 auto foo() -> int。
+  -modernize-use-trailing-return-type,
+
+  # 不强制使用 auto。
+  # LLVM 内部常用 auto，但业务项目里过度 auto 可能降低可读性。
+  -modernize-use-auto,
+
+  # 不禁止 C 数组。
+  # 系统编程、协议解析、栈上 buffer 里经常需要 char buf[4096]。
+  -modernize-avoid-c-arrays,
+
+  # 不强制添加 [[nodiscard]]。
+  -modernize-use-nodiscard,
+
+  # 关闭魔法数字检查，避免大量噪音。
+  -readability-magic-numbers,
+
+  # 不限制变量名长度。
+  # i、j、fd、db、id 等短变量名在 C++ 项目中很常见。
+  -readability-identifier-length,
+
+  # 关闭认知复杂度检查。
+  # 这个检查有价值，但在老项目中通常噪音较大。
+  -readability-function-cognitive-complexity,
+
+  # 不强制把未访问成员变量的成员函数改成 static。
+  -readability-convert-member-functions-to-static,
+
+  # 不强制把普通循环改成 any_of/all_of。
+  -readability-use-anyofallof,
+
+  # 关闭 Core Guidelines 的魔法数字检查。
+  -cppcoreguidelines-avoid-magic-numbers,
+
+  # 不禁止数组退化为指针。
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+
+  # 不禁止指针算术。
+  # 系统编程中经常需要操作 buffer 指针。
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+
+  # 不禁止 reinterpret_cast。
+  # 网络协议、序列化、mmap、系统接口中可能需要。
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+
+  # 不禁止 C 风格 varargs。
+  -cppcoreguidelines-pro-type-vararg,
+
+  # 不禁止 C 数组。
+  -cppcoreguidelines-avoid-c-arrays,
+
+  # 关闭 owning-memory 检查。
+  # 对 C API、历史代码和底层封装容易产生误报。
+  -cppcoreguidelines-owning-memory,
+
+  # 不强制 class 的所有成员变量都 private。
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+
+  # 不强制特殊成员函数规则。
+  # 否则很多类会被要求显式声明拷贝/移动/析构。
+  -cppcoreguidelines-special-member-functions,
+
+  # 关闭“相邻参数类型相同容易传反”的检查。
+  # 例如 void setRange(int begin, int end) 会触发，噪音较大。
+  -bugprone-easily-swappable-parameters,
+
+  # 关闭异常逃逸检查。
+  # 如果项目有严格 noexcept 策略，可以后续单独打开。
+  -bugprone-exception-escape,
+
+  # 关闭 optional 未检查访问。
+  # 如果项目大量使用 std::optional，可考虑重新打开。
+  -bugprone-unchecked-optional-access,
+
+  # 与 cppcoreguidelines-non-private-member-variables-in-classes 类似，避免重复噪音。
+  -misc-non-private-member-variables-in-classes
+
+# 默认不把 clang-tidy warning 当 error。
+# 建议老项目和新项目初期都先保持为空。
+# 后续可改成：
+#
+# WarningsAsErrors: >
+#   bugprone-*,
+#   performance-*,
+#   clang-analyzer-*
+WarningsAsErrors: ''
+
+# 检查哪些头文件。
+# '.*' 表示所有头文件都检查。
+# 如果第三方库噪音太大，可以改成：
+# HeaderFilterRegex: '^(src|include|tests)/.*'
+HeaderFilterRegex: '.*'
+
+# 是否分析临时对象析构相关问题。
+# 一般保持 false，避免额外噪音。
+AnalyzeTemporaryDtors: false
+
+# clang-tidy 自动修复时使用 .clang-format 的格式化规则。
+FormatStyle: file
+
+CheckOptions:
+  # namespace 使用 lower_case。
+  #
+  # namespace my_project {
+  # namespace net {
+  # }
+  # }
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # class 使用 CamelCase。
+  #
+  # class TcpServer {};
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+
+  # struct 使用 CamelCase。
+  #
+  # struct HttpRequest {};
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+
+  # enum / enum class 使用 CamelCase。
+  #
+  # enum class ConnectionState {};
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+
+  # 枚举值使用 CamelCase。
+  #
+  # enum class State {
+  #   Init,
+  #   Running,
+  # };
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
+
+  # 函数使用 camelBack，即小驼峰。
+  #
+  # void startServer();
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+
+  # 成员函数使用 camelBack。
+  #
+  # server.start();
+  # server.connectionCount();
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+
+  # 普通变量使用 camelBack。
+  #
+  # int retryCount = 0;
+  - key: readability-identifier-naming.VariableCase
+    value: camelBack
+
+  # 局部变量使用 camelBack。
+  - key: readability-identifier-naming.LocalVariableCase
+    value: camelBack
+
+  # 函数参数使用 camelBack。
+  #
+  # void connectTo(std::string_view serverAddress);
+  - key: readability-identifier-naming.ParameterCase
+    value: camelBack
+
+  # 成员变量主体使用 camelBack。
+  #
+  # int listenFd_;
+  - key: readability-identifier-naming.MemberCase
+    value: camelBack
+
+  # private 成员变量加后缀 _。
+  #
+  # private:
+  #   int listenFd_;
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: _
+
+  # protected 成员变量加后缀 _。
+  - key: readability-identifier-naming.ProtectedMemberSuffix
+    value: _
+
+  # 全局常量主体使用 CamelCase。
+  #
+  # constexpr int kDefaultTimeoutMs = 3000;
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: CamelCase
+
+  # 全局常量加 k 前缀。
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: k
+
+  # static 常量主体使用 CamelCase。
+  - key: readability-identifier-naming.StaticConstantCase
+    value: CamelCase
+
+  # static 常量加 k 前缀。
+  - key: readability-identifier-naming.StaticConstantPrefix
+    value: k
+
+  # constexpr 变量主体使用 CamelCase。
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: CamelCase
+
+  # constexpr 变量加 k 前缀。
+  - key: readability-identifier-naming.ConstexprVariablePrefix
+    value: k
+
+  # 宏定义使用 UPPER_CASE。
+  #
+  # #define MY_PROJECT_CHECK(expr) ...
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  # 函数超过 120 行时提示。
+  - key: readability-function-size.LineThreshold
+    value: '120'
+
+  # 函数超过 80 条语句时提示。
+  - key: readability-function-size.StatementThreshold
+    value: '80'
+
+  # 函数分支超过 20 个时提示。
+  - key: readability-function-size.BranchThreshold
+    value: '20'
+
+  # 函数参数超过 8 个时提示。
+  - key: readability-function-size.ParameterThreshold
+    value: '8'
+
+  # 检查函数调用实参注释。
+  #
+  # createConnection(/*timeoutMs=*/3000, /*retryCount=*/3);
+  - key: bugprone-argument-comment.StrictMode
+    value: '1'
+
+  # range-for 转换时，允许拷贝的小对象最大字节数。
+  - key: modernize-loop-convert.MaxCopySize
+    value: '16'
+
+  # range-for 转换建议的置信度。
+  # reasonable 表示不要过于激进。
+  - key: modernize-loop-convert.MinConfidence
+    value: reasonable
+
+  # 对这些类型，允许按值传参不触发 unnecessary-value-param。
+  # 例如 std::function 按值传入再 std::move 到成员变量很常见。
+  - key: performance-unnecessary-value-param.AllowedTypes
+    value: 'std::shared_ptr;std::weak_ptr;std::function'
+
+  # explicit virtual functions 检查忽略析构函数。
+  - key: cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
+    value: '1'
