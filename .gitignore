@@ -1,0 +1,10 @@
+/bazel-*
+*/bazel-external
+!MODULE.bazel.lock
+.vscode/
+# CLion / IntelliJ / Eclipse / Vim
+.idea/
+/.clwb/
+/.ijwb/
+*.swp
+.DS_Store

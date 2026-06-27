@@ -1,4 +1,12 @@
 {
-  "image": "ghcr.io/neibniz/gcc-dev:d5e127da5e21",
-  "features": {}
+  "image": "ghcr.io/neibniz/clang-dev:21dad9467858",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "BazelBuild.vscode-bazel"
+      ]
+    }
+  }
 }
