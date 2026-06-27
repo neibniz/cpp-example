@@ -1,5 +1,5 @@
 {
-  "image": "ghcr.io/neibniz/clang-dev:21dad9467858",
+  "image": "ghcr.io/neibniz/clang-dev:cdff8e608dac",
   "features": {},
   "customizations": {
     "vscode": {
