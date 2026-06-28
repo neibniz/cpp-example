@@ -1,5 +1,9 @@
 {
+  "name": "cpp-example-bazel",
   "image": "ghcr.io/neibniz/bazel-dev:18e5dadcd545",
+  "containerEnv": {
+    "BAZELISK_HOME": "/tmp/bazelisk"
+  },
   "features": {},
   "customizations": {
     "vscode": {

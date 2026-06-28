@@ -1,0 +1,6 @@
+# Copy this file to .bazelrc.local and fill in the real token when you want
+# remote BuildBuddy cache/BES uploads:
+#
+#   bazel build --config=remote //...
+#
+build:remote --remote_header=x-buildbuddy-api-key=<buildbuddy-api-key>

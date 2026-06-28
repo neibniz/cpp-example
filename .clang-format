@@ -352,4 +352,3 @@ DeriveLineEnding: true
 
 # 不使用 Windows CRLF。
 UseCRLF: false
-...

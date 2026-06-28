@@ -1,13 +1,11 @@
-
-
 load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+
+package(default_visibility = ["//visibility:private"])
 
 cc_binary(
     name = "hello",
-    srcs = [
-        "main.cpp",
-    ],
+    srcs = ["main.cpp"],
     deps = [
-        "@fmt//:fmt", # 将 fmt 库链接到你的 main 目标中
+        "@fmt//:fmt",
     ],
 )

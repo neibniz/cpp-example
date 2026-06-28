@@ -1,6 +1,8 @@
 /bazel-*
 */bazel-external
 !MODULE.bazel.lock
+.bazelrc.local
+compile_commands.json
 .vscode/
 # CLion / IntelliJ / Eclipse / Vim
 .idea/

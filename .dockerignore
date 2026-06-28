@@ -1,0 +1,6 @@
+.git
+.bazelrc.local
+.vscode
+.idea
+bazel-*
+compile_commands.json
