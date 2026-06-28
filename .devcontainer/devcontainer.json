@@ -1,16 +1,31 @@
 {
-  "name": "cpp-example-bazel",
-  "image": "ghcr.io/neibniz/bazel-dev:18e5dadcd545",
+  "name": "${localWorkspaceFolderBasename}",
+  "image": "ghcr.io/neibniz/clang-dev:621aefcd05d6",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
   "containerEnv": {
-    "BAZELISK_HOME": "/tmp/bazelisk"
+    "CONAN_HOME": "/home/vscode/.conan2",
+    "XDG_CACHE_HOME": "/home/vscode/.cache"
   },
-  "features": {},
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-vscode-server,target=/home/vscode/.vscode-server,type=volume",
+    "source=${localWorkspaceFolderBasename}-vscode-server-insiders,target=/home/vscode/.vscode-server-insiders,type=volume",
+    "source=${localWorkspaceFolderBasename}-conan2,target=/home/vscode/.conan2,type=volume",
+    "source=${localWorkspaceFolderBasename}-cache,target=/home/vscode/.cache,type=volume"
+  ],
+  "postCreateCommand": "conan profile path default >/dev/null 2>&1 || conan profile detect --force; profile=$(conan profile path default); if grep -q '^compiler.cppstd=' \"$profile\"; then sed -i 's/^compiler.cppstd=.*/compiler.cppstd=20/' \"$profile\"; else sed -i '/^\\[settings\\]/a compiler.cppstd=20' \"$profile\"; fi",
   "customizations": {
     "vscode": {
       "extensions": [
         "llvm-vs-code-extensions.vscode-clangd",
-        "BazelBuild.vscode-bazel"
-      ]
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "cmake.configureOnOpen": false,
+        "clangd.arguments": [
+          "--compile-commands-dir=build/debug"
+        ]
+      }
     }
   }
 }

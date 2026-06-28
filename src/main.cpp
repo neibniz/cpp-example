@@ -1,8 +1,9 @@
+#include "app/greeting.hpp"
 
-#include <fmt/core.h>
+#include <iostream>
 
-int main(int argc, char *argv[]) {
-  fmt::print("Hello, {}!\n", "ChatGPT");
+int main() {
+  std::cout << app::greeting("ChatGPT") << '\n';
 
   return 0;
 }

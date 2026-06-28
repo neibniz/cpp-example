@@ -1,171 +1,56 @@
-# clangd 是 C/C++ 语言服务器，负责 IDE 中的：
-# - 补全
-# - 跳转定义
-# - 查找引用
-# - 实时诊断
-# - 头文件自动插入
-# - 后台索引
+# clangd reads build flags from CMake's compile_commands.json.
+# Configure the `debug` preset before relying on IDE diagnostics.
 
 CompileFlags:
-  # compile_commands.json 所在目录。
-  #
-  # Bazel 项目如果用 hedron_compile_commands 在根目录生成 compile_commands.json，
-  # 这里保持 "."。
-  #
-  # CMake 项目如果 compile_commands.json 在 build/ 目录，
-  # 可以改成：
-  #
-  # CompilationDatabase: build
-  CompilationDatabase: .
-
-  # 额外追加给 clangd 的编译参数。
-  # 注意：最准确的编译参数应该来自 compile_commands.json。
-  # 这里更多是兜底配置。
+  CompilationDatabase: build/debug
   Add:
-    # 使用 C++20。
-    # 如果项目是 C++23，可以改成 -std=c++23。
     - -std=c++20
-
-    # 常见警告集合。
     - -Wall
-
-    # 额外警告。
     - -Wextra
-
-    # 对非标准 C++ 扩展发出警告。
     - -Wpedantic
-
-    # 检查隐式类型转换风险。
-    #
-    # double x = 3.14;
-    # int y = x; // 可能警告
     - -Wconversion
-
-    # 检查变量遮蔽。
-    #
-    # int value = 1;
-    # {
-    #   int value = 2; // shadow
-    # }
     - -Wshadow
-
-    # 检查有虚函数但析构函数非 virtual 的类。
     - -Wnon-virtual-dtor
-
-    # 禁止 C 风格 cast。
-    #
-    # int x = (int)y;
     - -Wold-style-cast
-
-    # 检查子类函数意外隐藏基类虚函数。
     - -Woverloaded-virtual
-
-    # 检查明显空指针解引用。
-    - -Wnull-dereference
-
-    # 更严格的格式化字符串检查。
     - -Wformat=2
-
-  # 从 compile_commands.json 中移除某些 clangd 不兼容或不想在 IDE 中使用的参数。
   Remove:
-    # 有些构建系统会带这个参数，对 clangd 体验没有必要。
     - -fno-canonical-system-headers
-
-    # 如果项目 compile_commands.json 中带有 -Werror，
-    # IDE 里可能过于吵，可以取消下面注释。
-    #
-    # - -Werror
 
 Diagnostics:
   ClangTidy:
-    # 在 IDE 中启用的 clang-tidy 检查。
-    # 这里建议只放相对低噪音的检查。
     Add:
-      # Clang 静态分析器。
       - clang-analyzer-*
-
-      # 容易出错的写法。
       - bugprone-*
-
-      # 性能问题。
       - performance-*
-
-      # 现代 C++ 建议。
       - modernize-*
-
-      # 可读性建议。
       - readability-*
-
-    # 在 IDE 实时诊断中关闭高噪音检查。
-    # 更完整的检查交给命令行 run-clang-tidy 或 CI。
     Remove:
-      # 不强制尾置返回类型。
       - modernize-use-trailing-return-type
-
-      # 不强制 auto。
       - modernize-use-auto
-
-      # 不检查魔法数字。
       - readability-magic-numbers
-
-      # 不限制变量名长度。
       - readability-identifier-length
-
-      # 不检查相邻同类型参数容易传反。
       - bugprone-easily-swappable-parameters
-
-  # 严格提示未使用 include。
   UnusedIncludes: Strict
-
-  # 严格提示缺失 include。
   MissingIncludes: Strict
 
 InlayHints:
-  # 启用内联提示。
   Enabled: Yes
-
-  # 函数调用处显示参数名提示。
-  #
-  # connect(/*timeoutMs:*/ 3000, /*retryCount:*/ 3)
   ParameterNames: Yes
-
-  # 显示 auto 推导类型。
-  #
-  # auto conn = createConnection();
-  # IDE 可提示 conn 的真实类型。
   DeducedTypes: Yes
-
-  # 显示 designated initializer 等提示。
   Designators: Yes
-
-  # 不在代码块结尾显示额外提示，避免画面太乱。
   BlockEnd: No
 
 Hover:
-  # 悬浮类型时显示别名展开。
-  #
-  # using UserId = uint64_t;
-  # hover 时可显示 UserId aka uint64_t。
   ShowAKA: Yes
 
 Completion:
-  # 补全时搜索所有作用域。
   AllScopes: Yes
-
-  # 补全函数时插入完整参数占位符。
   ArgumentLists: FullPlaceholders
-
-  # 补全符号时按 IWYU 思路自动插入头文件。
   HeaderInsertion: IWYU
 
 Index:
-  # 启用后台索引。
-  # 首次打开大型项目会消耗一些 CPU，但跳转和查找引用体验更好。
   Background: Build
 
 Style:
-  # 补全时不强制使用完整命名空间。
-  #
-  # false 时更倾向 StringRef；
-  # true 时更倾向 llvm::StringRef。
   FullyQualifiedNamespaces: false

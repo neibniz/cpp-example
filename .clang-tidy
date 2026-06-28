@@ -45,10 +45,9 @@ Checks: >
 WarningsAsErrors: ''
 
 # 检查哪些头文件。
-# '.*' 表示所有头文件都检查。
-# 如果第三方库噪音太大，可以改成：
-# HeaderFilterRegex: '^(src|include|tests)/.*'
-HeaderFilterRegex: '.*'
+# 只检查项目源码，避免 Conan 缓存和系统头文件产生噪音。
+HeaderFilterRegex: '^(benchmarks|include|src|tests)/.*'
+SystemHeaders: false
 
 # clang-tidy 自动修复时使用 .clang-format 的格式化规则。
 FormatStyle: file

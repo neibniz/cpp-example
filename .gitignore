@@ -1,12 +1,19 @@
-/bazel-*
-*/bazel-external
-!MODULE.bazel.lock
-.bazelrc.local
+build/
+cmake-build-*/
+CMakeUserPresets.json
 compile_commands.json
+coverage/
+*.gcda
+*.gcno
+*.gcov
+*.profdata
+*.profraw
+
+.conan2/
+.cache/
+
 .vscode/
-# CLion / IntelliJ / Eclipse / Vim
 .idea/
-/.clwb/
-/.ijwb/
+
 *.swp
 .DS_Store
