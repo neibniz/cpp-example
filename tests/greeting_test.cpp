@@ -3,5 +3,5 @@
 #include <gtest/gtest.h>
 
 TEST(GreetingTest, FormatsName) {
-  EXPECT_EQ("Hello, ChatGPT!", app::greeting("ChatGPT"));
+  EXPECT_EQ("Hello, ChatGPT!", app::Greeting("ChatGPT"));
 }

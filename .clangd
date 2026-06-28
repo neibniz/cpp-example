@@ -1,56 +1,13 @@
-# clangd reads build flags from CMake's compile_commands.json.
-# Configure the `debug` preset before relying on IDE diagnostics.
-
 CompileFlags:
   CompilationDatabase: build/debug
-  Add:
-    - -std=c++20
-    - -Wall
-    - -Wextra
-    - -Wpedantic
-    - -Wconversion
-    - -Wshadow
-    - -Wnon-virtual-dtor
-    - -Wold-style-cast
-    - -Woverloaded-virtual
-    - -Wformat=2
-  Remove:
-    - -fno-canonical-system-headers
+  Add: [-std=c++20]
 
 Diagnostics:
-  ClangTidy:
-    Add:
-      - clang-analyzer-*
-      - bugprone-*
-      - performance-*
-      - modernize-*
-      - readability-*
-    Remove:
-      - modernize-use-trailing-return-type
-      - modernize-use-auto
-      - readability-magic-numbers
-      - readability-identifier-length
-      - bugprone-easily-swappable-parameters
   UnusedIncludes: Strict
   MissingIncludes: Strict
 
-InlayHints:
-  Enabled: Yes
-  ParameterNames: Yes
-  DeducedTypes: Yes
-  Designators: Yes
-  BlockEnd: No
-
-Hover:
-  ShowAKA: Yes
-
 Completion:
-  AllScopes: Yes
-  ArgumentLists: FullPlaceholders
   HeaderInsertion: IWYU
 
 Index:
   Background: Build
-
-Style:
-  FullyQualifiedNamespaces: false

@@ -5,6 +5,6 @@
 
 namespace app {
 
-[[nodiscard]] std::string greeting(std::string_view name);
+[[nodiscard]] std::string Greeting(std::string_view name);
 
-} // namespace app
+}  // namespace app

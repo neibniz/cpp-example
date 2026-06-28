@@ -1,12 +1,13 @@
-#include "app/greeting.hpp"
-
 #include <benchmark/benchmark.h>
 
-static void benchmarkGreeting(benchmark::State &state) {
+#include "app/greeting.hpp"
+
+static void BenchmarkGreeting(benchmark::State& state) {
+  // NOLINTNEXTLINE(clang-analyzer-deadcode.DeadStores)
   for (auto _ : state) {
-    benchmark::DoNotOptimize(app::greeting("ChatGPT"));
+    benchmark::DoNotOptimize(app::Greeting("ChatGPT"));
   }
 }
 
-BENCHMARK(benchmarkGreeting);
+BENCHMARK(BenchmarkGreeting);
 BENCHMARK_MAIN();

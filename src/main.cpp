@@ -1,9 +1,9 @@
-#include "app/greeting.hpp"
-
 #include <iostream>
 
+#include "app/greeting.hpp"
+
 int main() {
-  std::cout << app::greeting("ChatGPT") << '\n';
+  std::cout << app::Greeting("ChatGPT") << '\n';
 
   return 0;
 }

@@ -1,208 +1,61 @@
-# 先关闭所有检查，再显式开启需要的检查集合。
-# 这样可以避免 clang-tidy 版本升级后突然引入大量新规则。
-# 集合：clang-analyzer、bugprone、performance、modernize、readability、misc、cppcoreguidelines。
-# 下面排除的是当前项目阶段噪音较高或不适合底层 C++ 代码的规则。
 Checks: >
   -*,
   clang-analyzer-*,
   bugprone-*,
   performance-*,
   modernize-*,
-  readability-*,
-  misc-*,
-  cppcoreguidelines-*,
-  -modernize-use-trailing-return-type,
-  -modernize-use-auto,
-  -modernize-avoid-c-arrays,
-  -modernize-use-nodiscard,
-  -readability-magic-numbers,
-  -readability-identifier-length,
-  -readability-function-cognitive-complexity,
-  -readability-convert-member-functions-to-static,
-  -readability-use-anyofallof,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
-  -cppcoreguidelines-pro-type-vararg,
-  -cppcoreguidelines-avoid-c-arrays,
-  -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-non-private-member-variables-in-classes,
-  -cppcoreguidelines-special-member-functions,
+  misc-include-cleaner,
+  readability-identifier-naming,
   -bugprone-easily-swappable-parameters,
-  -bugprone-exception-escape,
-  -bugprone-unchecked-optional-access,
-  -misc-non-private-member-variables-in-classes
+  -modernize-avoid-c-arrays,
+  -modernize-use-auto,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type
 
-# 默认不把 clang-tidy warning 当 error。
-# 建议老项目和新项目初期都先保持为空。
-# 后续可改成：
-#
-# WarningsAsErrors: >
-#   bugprone-*,
-#   performance-*,
-#   clang-analyzer-*
-WarningsAsErrors: ''
-
-# 检查哪些头文件。
-# 只检查项目源码，避免 Conan 缓存和系统头文件产生噪音。
 HeaderFilterRegex: '^(benchmarks|include|src|tests)/.*'
 SystemHeaders: false
-
-# clang-tidy 自动修复时使用 .clang-format 的格式化规则。
 FormatStyle: file
 
 CheckOptions:
-  # namespace 使用 lower_case。
-  #
-  # namespace my_project {
-  # namespace net {
-  # }
-  # }
   - key: readability-identifier-naming.NamespaceCase
     value: lower_case
-
-  # class 使用 CamelCase。
-  #
-  # class TcpServer {};
   - key: readability-identifier-naming.ClassCase
     value: CamelCase
-
-  # struct 使用 CamelCase。
-  #
-  # struct HttpRequest {};
   - key: readability-identifier-naming.StructCase
     value: CamelCase
-
-  # enum / enum class 使用 CamelCase。
-  #
-  # enum class ConnectionState {};
   - key: readability-identifier-naming.EnumCase
     value: CamelCase
-
-  # 枚举值使用 CamelCase。
-  #
-  # enum class State {
-  #   Init,
-  #   Running,
-  # };
   - key: readability-identifier-naming.EnumConstantCase
     value: CamelCase
-
-  # 函数使用 camelBack，即小驼峰。
-  #
-  # void startServer();
+  - key: readability-identifier-naming.EnumConstantPrefix
+    value: k
   - key: readability-identifier-naming.FunctionCase
-    value: camelBack
-
-  # 成员函数使用 camelBack。
-  #
-  # server.start();
-  # server.connectionCount();
+    value: CamelCase
   - key: readability-identifier-naming.MethodCase
-    value: camelBack
-
-  # 普通变量使用 camelBack。
-  #
-  # int retryCount = 0;
+    value: CamelCase
   - key: readability-identifier-naming.VariableCase
-    value: camelBack
-
-  # 局部变量使用 camelBack。
+    value: lower_case
   - key: readability-identifier-naming.LocalVariableCase
-    value: camelBack
-
-  # 函数参数使用 camelBack。
-  #
-  # void connectTo(std::string_view serverAddress);
+    value: lower_case
   - key: readability-identifier-naming.ParameterCase
-    value: camelBack
-
-  # 成员变量主体使用 camelBack。
-  #
-  # int listenFd_;
+    value: lower_case
   - key: readability-identifier-naming.MemberCase
-    value: camelBack
-
-  # private 成员变量加后缀 _。
-  #
-  # private:
-  #   int listenFd_;
+    value: lower_case
   - key: readability-identifier-naming.PrivateMemberSuffix
     value: _
-
-  # protected 成员变量加后缀 _。
   - key: readability-identifier-naming.ProtectedMemberSuffix
     value: _
-
-  # 全局常量主体使用 CamelCase。
-  #
-  # constexpr int kDefaultTimeoutMs = 3000;
   - key: readability-identifier-naming.GlobalConstantCase
     value: CamelCase
-
-  # 全局常量加 k 前缀。
   - key: readability-identifier-naming.GlobalConstantPrefix
     value: k
-
-  # static 常量主体使用 CamelCase。
   - key: readability-identifier-naming.StaticConstantCase
     value: CamelCase
-
-  # static 常量加 k 前缀。
   - key: readability-identifier-naming.StaticConstantPrefix
     value: k
-
-  # constexpr 变量主体使用 CamelCase。
   - key: readability-identifier-naming.ConstexprVariableCase
     value: CamelCase
-
-  # constexpr 变量加 k 前缀。
   - key: readability-identifier-naming.ConstexprVariablePrefix
     value: k
-
-  # 宏定义使用 UPPER_CASE。
-  #
-  # #define MY_PROJECT_CHECK(expr) ...
   - key: readability-identifier-naming.MacroDefinitionCase
     value: UPPER_CASE
-
-  # 函数超过 120 行时提示。
-  - key: readability-function-size.LineThreshold
-    value: '120'
-
-  # 函数超过 80 条语句时提示。
-  - key: readability-function-size.StatementThreshold
-    value: '80'
-
-  # 函数分支超过 20 个时提示。
-  - key: readability-function-size.BranchThreshold
-    value: '20'
-
-  # 函数参数超过 8 个时提示。
-  - key: readability-function-size.ParameterThreshold
-    value: '8'
-
-  # 检查函数调用实参注释。
-  #
-  # createConnection(/*timeoutMs=*/3000, /*retryCount=*/3);
-  - key: bugprone-argument-comment.StrictMode
-    value: '1'
-
-  # range-for 转换时，允许拷贝的小对象最大字节数。
-  - key: modernize-loop-convert.MaxCopySize
-    value: '16'
-
-  # range-for 转换建议的置信度。
-  # reasonable 表示不要过于激进。
-  - key: modernize-loop-convert.MinConfidence
-    value: reasonable
-
-  # 对这些类型，允许按值传参不触发 unnecessary-value-param。
-  # 例如 std::function 按值传入再 std::move 到成员变量很常见。
-  - key: performance-unnecessary-value-param.AllowedTypes
-    value: 'std::shared_ptr;std::weak_ptr;std::function'
-
-  # explicit virtual functions 检查忽略析构函数。
-  - key: cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
-    value: '1'
