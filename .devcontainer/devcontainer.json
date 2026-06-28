@@ -1,19 +1,13 @@
 {
   "name": "${localWorkspaceFolderBasename}",
   "image": "ghcr.io/neibniz/clang-dev:621aefcd05d6",
-  "remoteUser": "vscode",
+  "remoteUser": "dev",
   "updateRemoteUserUID": true,
   "containerEnv": {
-    "CONAN_HOME": "/home/vscode/.conan2",
-    "XDG_CACHE_HOME": "/home/vscode/.cache"
+    "CONAN_HOME": "/home/dev/.conan2",
+    "XDG_CACHE_HOME": "/home/dev/.cache"
   },
-  "mounts": [
-    "source=${localWorkspaceFolderBasename}-vscode-server,target=/home/vscode/.vscode-server,type=volume",
-    "source=${localWorkspaceFolderBasename}-vscode-server-insiders,target=/home/vscode/.vscode-server-insiders,type=volume",
-    "source=${localWorkspaceFolderBasename}-conan2,target=/home/vscode/.conan2,type=volume",
-    "source=${localWorkspaceFolderBasename}-cache,target=/home/vscode/.cache,type=volume"
-  ],
-  "postCreateCommand": "conan profile path default >/dev/null 2>&1 || conan profile detect --force; profile=$(conan profile path default); if grep -q '^compiler.cppstd=' \"$profile\"; then sed -i 's/^compiler.cppstd=.*/compiler.cppstd=20/' \"$profile\"; else sed -i '/^\\[settings\\]/a compiler.cppstd=20' \"$profile\"; fi",
+  "postCreateCommand": "mkdir -p \"$CONAN_HOME\" \"$XDG_CACHE_HOME\"; conan profile path default >/dev/null 2>&1 || conan profile detect --force; profile=$(conan profile path default); if grep -q '^compiler.cppstd=' \"$profile\"; then sed -i 's/^compiler.cppstd=.*/compiler.cppstd=20/' \"$profile\"; else sed -i '/^\\[settings\\]/a compiler.cppstd=20' \"$profile\"; fi",
   "customizations": {
     "vscode": {
       "extensions": [

@@ -113,24 +113,28 @@ The dev container consumes a fixed prebuilt image and does not build an image
 from this repository:
 
 ```text
-ghcr.io/neibniz/cpp-cmake-conan:20260629
+ghcr.io/neibniz/clang-dev:621aefcd05d6
 ```
 
-That image is expected to contain CMake, Conan 2, a C++20 compiler, Make or
-Ninja, clangd, clang-format, and clang-tidy.
+That image is expected to contain CMake, Conan 2, a C++20 compiler, Ninja or
+Make, Git, and clangd. If standalone `clang-format` or `clang-tidy` commands
+are required, bake them into the prebuilt image.
 
-The dev container keeps Docker named volumes across container recreates. Volume
-names are derived from `${localWorkspaceFolderBasename}`, so the same template
-can be reused by different repositories without cache collisions:
+The same dev container is intended to work in GitHub Codespaces and local
+Dev Containers. The image must be public, or the repository must have access to
+the package in GitHub Container Registry. The current image tag exposes both
+`linux/amd64` and `linux/arm64` manifests.
 
-- `${localWorkspaceFolderBasename}-vscode-server`: VS Code Server and remote extensions
-- `${localWorkspaceFolderBasename}-vscode-server-insiders`: VS Code Insiders Server
-- `${localWorkspaceFolderBasename}-conan2`: Conan 2 package cache and profiles
-- `${localWorkspaceFolderBasename}-cache`: clangd and other XDG cache data
-
-VS Code may still download a new server once after the desktop app updates,
-because the server version is tied to the VS Code commit.
+The dev container intentionally avoids Docker `mounts` so the same
+configuration works in GitHub Codespaces and local Dev Containers. Conan and
+tool caches live under the container user's home directory for the lifetime of
+the container or codespace.
 
 The dev container `postCreateCommand` only ensures the Conan default profile
 exists and pins `compiler.cppstd=20`. Conan's detected profile can otherwise
 choose an older default standard.
+
+When switching between host builds and container builds in the same checkout,
+remove the ignored `build/` directory first. CMake caches absolute source and
+build paths, so a build tree generated on the host cannot be reused inside a
+container mounted at a different path.
