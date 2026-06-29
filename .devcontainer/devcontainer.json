@@ -1,6 +1,6 @@
 {
   "name": "${localWorkspaceFolderBasename}",
-  "image": "ghcr.io/neibniz/clang-dev:621aefcd05d6",
+  "image": "ghcr.io/neibniz/clang-dev:c757b24c64f0",
   "remoteUser": "dev",
   "updateRemoteUserUID": false,
   "containerEnv": {
