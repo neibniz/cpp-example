@@ -7,19 +7,13 @@
     "CONAN_HOME": "/home/dev/.conan2",
     "XDG_CACHE_HOME": "/home/dev/.cache"
   },
-  "postCreateCommand": "mkdir -p \"$CONAN_HOME\" \"$XDG_CACHE_HOME\"; conan profile path default >/dev/null 2>&1 || conan profile detect --force; profile=$(conan profile path default); if grep -q '^compiler.cppstd=' \"$profile\"; then sed -i 's/^compiler.cppstd=.*/compiler.cppstd=20/' \"$profile\"; else sed -i '/^\\[settings\\]/a compiler.cppstd=20' \"$profile\"; fi",
+  "postStartCommand": "mkdir -p \"$CONAN_HOME\" \"$XDG_CACHE_HOME\"; conan profile path default >/dev/null 2>&1 || conan profile detect --force; profile=$(conan profile path default); if grep -q '^compiler.cppstd=' \"$profile\"; then sed -i 's/^compiler.cppstd=.*/compiler.cppstd=20/' \"$profile\"; else sed -i '/^\\[settings\\]/a compiler.cppstd=20' \"$profile\"; fi",
   "customizations": {
     "vscode": {
       "extensions": [
         "llvm-vs-code-extensions.vscode-clangd",
         "ms-vscode.cmake-tools"
-      ],
-      "settings": {
-        "cmake.configureOnOpen": false,
-        "clangd.arguments": [
-          "--compile-commands-dir=build/debug"
-        ]
-      }
+      ]
     }
   }
 }
