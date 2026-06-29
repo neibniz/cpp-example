@@ -2,7 +2,7 @@
   "name": "${localWorkspaceFolderBasename}",
   "image": "ghcr.io/neibniz/clang-dev:621aefcd05d6",
   "remoteUser": "dev",
-  "updateRemoteUserUID": true,
+  "updateRemoteUserUID": false,
   "containerEnv": {
     "CONAN_HOME": "/home/dev/.conan2",
     "XDG_CACHE_HOME": "/home/dev/.cache"
