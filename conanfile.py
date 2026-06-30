@@ -17,7 +17,7 @@ class ProjectConan(ConanFile):
 
     def requirements(self):
         self.requires("fmt/12.1.0")
-
+        self.requires("protobuf/7.35.0")
         if self.options.with_tests:
             self.requires("gtest/1.17.0")
 

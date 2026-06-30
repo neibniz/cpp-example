@@ -7,6 +7,7 @@ project(
   LANGUAGES CXX
 )
 
+include(estate_neibniz_protocolbuffers_cpp.cmake)
 include(cmake/Targets.cmake)
 include(CTest)
 
@@ -24,7 +25,10 @@ target_link_libraries(app_core PRIVATE fmt::fmt)
 
 project_add_executable(app src/main.cpp)
 
-target_link_libraries(app PRIVATE app::core)
+target_link_libraries(app 
+  PRIVATE app::core
+  estate_neibniz_protocolbuffers_cpp
+)
 
 if(PROJECT_ENABLE_TESTS)
   add_subdirectory(tests)
